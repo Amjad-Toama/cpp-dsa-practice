@@ -3,10 +3,9 @@
 
 class ScopedBuffer {
 public:
-    explicit ScopedBuffer(size_t size);  // allocate
-    ~ScopedBuffer();                     // free
+    explicit ScopedBuffer(size_t size);
+    ~ScopedBuffer();                   
 
-    // delete copy — why? write the reason as a comment
     ScopedBuffer(const ScopedBuffer&) = delete;
     ScopedBuffer& operator=(const ScopedBuffer&) = delete;
 
@@ -18,6 +17,33 @@ private:
     int* data_;
     size_t size_;
 };
+
+ScopedBuffer::ScopedBuffer(size_t size) : data_{new int[size]}, size_{size} {
+    std::cout << "ScopedBuffer constructed\n";
+}
+
+ScopedBuffer::~ScopedBuffer() {
+    delete[] data_;
+    std::cout << "ScopedBuffer destroyed\n";
+}
+
+size_t ScopedBuffer::size() const {
+    return size_;
+}
+
+int& ScopedBuffer::operator[](size_t i) {
+    if (i >= size_){
+        throw std::out_of_range("index out of range");
+    }
+    return data_[i];
+}
+
+const int& ScopedBuffer::operator[](size_t i) const {
+    if (i >= size_){
+        throw std::out_of_range("index out of range");
+    }
+    return data_[i];
+}
 
 int main() {
     ScopedBuffer buf{5};
